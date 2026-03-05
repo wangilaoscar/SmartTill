@@ -134,14 +134,14 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <StatCard
                     title="Total Revenue"
-                    value={`$${stats.revenue.toFixed(2)}`}
+                    value={`KSh ${stats.revenue.toFixed(2)}`}
                     icon={DollarSign}
                     colorClass="bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white"
                     subtitle="Today's combined sales"
                 />
                 <StatCard
                     title="Net Profit"
-                    value={`$${stats.profit.toFixed(2)}`}
+                    value={`KSh ${stats.profit.toFixed(2)}`}
                     icon={TrendingUp}
                     colorClass="bg-blue-100 text-blue-600"
                     subtitle="Estimated profit"

@@ -121,10 +121,10 @@ export default function SalesHistory() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right text-slate-600">
-                                            ${sale.selling_price?.toFixed(2)}
+                                            KSh {sale.selling_price?.toFixed(2)}
                                         </td>
                                         <td className="px-6 py-4 text-right font-semibold text-slate-900">
-                                            ${sale.total?.toFixed(2)}
+                                            KSh {sale.total?.toFixed(2)}
                                         </td>
                                     </tr>
                                 ))

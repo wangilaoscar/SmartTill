@@ -106,7 +106,7 @@ export default function AddSale() {
                                 Selling Price *
                             </label>
                             <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">$</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">KSh</span>
                                 <input
                                     required
                                     type="number"
@@ -127,7 +127,7 @@ export default function AddSale() {
                                 Cost Price (Optional)
                             </label>
                             <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">$</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">KSh</span>
                                 <input
                                     type="number"
                                     min="0"
@@ -145,7 +145,7 @@ export default function AddSale() {
 
                     <div className="pt-4 border-t border-slate-100 mt-8 flex items-center justify-between transition-all">
                         <div className="text-lg font-bold text-slate-800">
-                            Total: ${((parseFloat(formData.selling_price) || 0) * (parseInt(formData.quantity, 10) || 1)).toFixed(2)}
+                            Total: KSh {((parseFloat(formData.selling_price) || 0) * (parseInt(formData.quantity, 10) || 1)).toFixed(2)}
                         </div>
 
                         <button
