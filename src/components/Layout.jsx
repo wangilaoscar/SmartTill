@@ -41,13 +41,15 @@ export default function Layout() {
                             <span className="text-xs md:text-base font-medium mt-1 md:mt-0">Add Sale</span>
                         </NavLink>
 
-                        <NavLink
-                            to="/history"
-                            className={({ isActive }) => `flex flex-col md:flex-row items-center p-3 rounded-xl transition-colors ${isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
-                        >
-                            <History className="w-6 h-6 md:mr-3" />
-                            <span className="text-xs md:text-base font-medium mt-1 md:mt-0">History</span>
-                        </NavLink>
+                        {role === 'owner' && (
+                            <NavLink
+                                to="/history"
+                                className={({ isActive }) => `flex flex-col md:flex-row items-center p-3 rounded-xl transition-colors ${isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
+                            >
+                                <History className="w-6 h-6 md:mr-3" />
+                                <span className="text-xs md:text-base font-medium mt-1 md:mt-0">History</span>
+                            </NavLink>
+                        )}
                     </div>
                 </div>
 

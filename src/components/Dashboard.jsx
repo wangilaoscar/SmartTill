@@ -118,6 +118,10 @@ export default function Dashboard() {
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Today's Overview</h1>
                     <p className="text-slate-500 mt-2">Live transaction monitoring for {format(new Date(), 'MMMM d, yyyy')}</p>
+                    <div className="mt-4 inline-flex items-center px-4 py-2 bg-slate-100 border border-slate-200 rounded-xl text-sm">
+                        <span className="text-slate-600 font-medium mr-3">Shop Invite Code:</span>
+                        <code className="bg-white px-3 py-1 rounded text-blue-600 font-mono font-bold select-all shadow-sm">{shopId}</code>
+                    </div>
                 </div>
                 {loading && (
                     <div className="flex items-center text-blue-600 bg-blue-50 px-4 py-2 rounded-full text-sm font-semibold max-sm:hidden">
