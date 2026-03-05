@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../AuthContext';
 import { CheckCircle2, PackageSearch, Tag, Receipt, Wallet, Plus } from 'lucide-react';
 
 export default function AddSale() {
+    const { shopId } = useAuth();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
@@ -28,6 +30,7 @@ export default function AddSale() {
 
         try {
             const { error } = await supabase.from('sales').insert([{
+                shop_id: shopId,
                 product_name: formData.product_name,
                 quantity: parseInt(formData.quantity, 10) || 1,
                 selling_price: parseFloat(formData.selling_price) || 0,

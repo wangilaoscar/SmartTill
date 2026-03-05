@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../AuthContext';
 import { TrendingUp, DollarSign, ShoppingCart, Package, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function Dashboard() {
+    const { shopId } = useAuth();
     const [stats, setStats] = useState({
         revenue: 0,
         profit: 0,
@@ -14,11 +16,12 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!shopId) return;
         fetchStats();
 
         const channel = supabase
             .channel('dashboard_changes')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'sales', filter: `shop_id=eq.${shopId}` }, () => {
                 fetchStats();
             })
             .subscribe();
@@ -26,7 +29,7 @@ export default function Dashboard() {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, []);
+    }, [shopId]);
 
     const fetchStats = async () => {
         try {
@@ -36,6 +39,7 @@ export default function Dashboard() {
             const { data, error } = await supabase
                 .from('sales')
                 .select('*')
+                .eq('shop_id', shopId)
                 .gte('created_at', today.toISOString());
 
             if (error) throw error;

@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../AuthContext';
 import { format } from 'date-fns';
 import { History, Search } from 'lucide-react';
 
 export default function SalesHistory() {
+    const { shopId } = useAuth();
     const [sales, setSales] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
+        if (!shopId) return;
         fetchSales();
 
         const channel = supabase
             .channel('sales_history_changes')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'sales' }, (payload) => {
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'sales', filter: `shop_id=eq.${shopId}` }, (payload) => {
                 setSales(current => [payload.new, ...current]);
             })
             .subscribe();
@@ -21,7 +24,7 @@ export default function SalesHistory() {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, []);
+    }, [shopId]);
 
     const fetchSales = async () => {
         try {
@@ -29,6 +32,7 @@ export default function SalesHistory() {
             const { data, error } = await supabase
                 .from('sales')
                 .select('*')
+                .eq('shop_id', shopId)
                 .order('created_at', { ascending: false })
                 .limit(100);
 
