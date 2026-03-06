@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../AuthContext';
-import { CheckCircle2, PackageSearch, Tag, Receipt, Wallet, Plus } from 'lucide-react';
+import { CheckCircle2, PackageSearch, Tag, Receipt, Wallet, Plus, TrendingUp, ShoppingCart } from 'lucide-react';
 
 export default function AddSale() {
     const { shopId } = useAuth();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [workerStats, setWorkerStats] = useState({ revenue: 0, count: 0 });
 
     const [formData, setFormData] = useState({
         product_name: '',
@@ -14,6 +15,48 @@ export default function AddSale() {
         selling_price: '',
         cost_price: ''
     });
+
+    useEffect(() => {
+        if (shopId) fetchWorkerStats();
+
+        const channel = supabase
+            .channel('worker_sales_changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'sales', filter: `shop_id=eq.${shopId}` }, () => {
+                fetchWorkerStats();
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [shopId]);
+
+    const fetchWorkerStats = async () => {
+        try {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const { data, error } = await supabase
+                .from('sales')
+                .select('total')
+                .eq('shop_id', shopId)
+                .gte('created_at', today.toISOString());
+
+            if (error) throw error;
+
+            let revenue = 0;
+            data.forEach(sale => {
+                revenue += parseFloat(sale.total) || 0;
+            });
+
+            setWorkerStats({
+                revenue,
+                count: data.length
+            });
+        } catch (err) {
+            console.error('Error fetching worker stats:', err.message);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -59,9 +102,28 @@ export default function AddSale() {
 
     return (
         <div className="max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Record Sale</h1>
-                <p className="text-slate-500 mt-2">Enter the details of the new transaction below.</p>
+            <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Record Sale</h1>
+                    <p className="text-slate-500 mt-2">Enter the details of the new transaction below.</p>
+                </div>
+
+                <div className="flex gap-3">
+                    <div className="bg-emerald-50 border border-emerald-100 p-3 rounded-xl flex items-center">
+                        <TrendingUp className="w-5 h-5 text-emerald-500 mr-2" />
+                        <div>
+                            <p className="text-[10px] uppercase font-bold text-emerald-600 tracking-wider">Today's Revenue</p>
+                            <p className="font-bold text-slate-800">KSh {workerStats.revenue.toFixed(2)}</p>
+                        </div>
+                    </div>
+                    <div className="bg-blue-50 border border-blue-100 p-3 rounded-xl flex items-center">
+                        <ShoppingCart className="w-5 h-5 text-blue-500 mr-2" />
+                        <div>
+                            <p className="text-[10px] uppercase font-bold text-blue-600 tracking-wider">Sales Today</p>
+                            <p className="font-bold text-slate-800">{workerStats.count}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 md:p-8">

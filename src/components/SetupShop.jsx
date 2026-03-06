@@ -29,6 +29,7 @@ export default function SetupShop() {
 
                 if (shopError) throw shopError;
                 activeShopId = newShopId;
+                console.log("activeShopId", activeShopId)
             } else {
                 // Verify the shop exists
                 const { data, error } = await supabase
@@ -38,6 +39,10 @@ export default function SetupShop() {
                     .single();
 
                 if (error || !data) {
+                    // For development purposes: attempt to fetch all shops and log them
+                    const { data: allShops } = await supabase.from('shops').select('id, name');
+                    console.log("Development info - Available shops in DB:", allShops);
+
                     throw new Error("Invalid Shop Invite Code. Please check and try again.");
                 }
             }
